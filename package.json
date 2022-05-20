@@ -1,0 +1,25 @@
+{
+  "name": "node-wheater-cli",
+  "version": "1.0.0",
+  "description": "cli for getting wheather",
+  "main": "index.js",
+  "bin": "./index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "wheather"
+  ],
+  "author": "blackmarllbor0",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://google.com"
+  },
+  "bugs": {
+    "email": "3100194@gmail.com",
+    "url": "https://github.com/blackmarllbor0"
+  }
+}
