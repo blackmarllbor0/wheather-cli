@@ -1,7 +1,11 @@
-import * as process from 'process';
+export interface Args {
+  help?: boolean | string;
+  save?: boolean | string;
+  token?: boolean | string;
+}
 
-export function getArgs(params: string[]): object {
-  const result = {};
+export function getArgs(params: string[]): Args {
+  const result: Args = {};
   const [exec, file, ...args] = params;
 
   args.forEach((item, index, array) => {
