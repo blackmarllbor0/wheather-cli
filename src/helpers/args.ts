@@ -1,7 +1,7 @@
 export interface Args {
-  help?: boolean | string;
-  save?: boolean | string;
-  token?: boolean | string;
+  h?: boolean | string; // help
+  c?: boolean | string; // set city
+  t?: boolean | string; // set token
 }
 
 export function getArgs(params: string[]): Args {

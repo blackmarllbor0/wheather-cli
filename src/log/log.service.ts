@@ -1,9 +1,10 @@
-import { white, bgGreen, bgBlue, bgRed } from 'colors';
+import { white, bgGreen, bgBlue, bgRed, bgYellow } from 'colors';
 import { LogInterface } from './log.interface';
+import { responce } from '../api/api.service';
 
 export class Logger implements LogInterface {
-  public log(msg: string): void {
-    console.log(`${bgGreen(white('SUCCESS'))} ${white(msg)}`);
+  public log(msg: unknown): void {
+    console.log(`${bgGreen(white('SUCCESS'))} ${white(msg as string)}`);
   }
 
   public error(msg: string): void {
@@ -15,24 +16,33 @@ export class Logger implements LogInterface {
       bgBlue(white('<-HELP-> \n')),
       white(`
 Без парамеров -> выводит погоду
--s [CITY] -> для установки города
 -h -> для вывода помощи
+-c [CITY] -> для установки города
 -t [API_KEY] -> для сохрвнения токена
         `),
     );
   }
 
-  public weather(): void {
-    // console.log(
-    //   chalk.white(
-    //     `${chalk.bgYellow('WEATHER')}\n`,
-    //     `Погода в городе ${res['location']['name']}:\n`,
-    //     `${res['current']['condition']['text']}\n`,
-    //     `Температура - ${res['current']['temp_c']} градусов\n`,
-    //     `Ощущается как - ${res['current']['feelslike_c']} градусов\n`,
-    //     `Влажность - ${res['current']['humidity']}%\n`,
-    //     `Скорость ветра - ${res['current']['wind_kph']} км/ч`,
-    //   ),
-    // );
+  public weather({
+    location: { name, country, localtime },
+    current: {
+      condition: { text },
+      temp_c,
+      feelslike_c,
+      humidity,
+      wind_kph,
+    },
+  }: responce): void {
+    console.log(
+      bgYellow('WEATHER\n'),
+      white(`
+Погода в городе ${country}/${name}: \n${text},
+Время ${localtime},
+Температура: ${temp_c} градусов,
+Ощущается как: ${feelslike_c} градусов,
+Влажность: ${humidity}%,
+Скорость ветра: ${wind_kph} км/ч.
+        `),
+    );
   }
 }

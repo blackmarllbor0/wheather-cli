@@ -4,7 +4,7 @@
   "description": "weather utility",
   "main": "src/main.ts",
   "scripts": {
-    "start": "node dist/main.js",
+    "start": "node dist/main.js -c mos",
     "dev": "tsx watch src/main.ts",
     "build": "tsc"
   },

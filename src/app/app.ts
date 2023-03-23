@@ -1,32 +1,30 @@
 #!/usr/bin/env node
 import { LogInterface } from '../log/log.interface';
-import { getArgs } from '../helpers/args';
-import * as process from 'process';
 import { ApiInterface } from '../api/api.interface';
 import { StorageInterface } from '../storage/storage.interface';
+import { ArgsInterface } from '../args/args.interface';
+import { storageKeys } from '../storage/storage.service';
+import { responce } from '../api/api.service';
 
 export class App {
   constructor(
     private readonly logger: LogInterface,
     private readonly apiService: ApiInterface,
     private readonly storageService: StorageInterface,
+    private readonly argsService: ArgsInterface,
   ) {}
 
   public async run(): Promise<void> {
-    const args = getArgs(process.argv);
+    const args = this.argsService.getArgs();
 
-    if (args.help) {
+    if (args.h) {
       this.logger.help();
-    } else if (args.save) {
-      await this.getForecast(args.save);
-    } else if (args.token) {
-      await this.saveToken(args.token as string);
+    } else if (args.c) {
+      await this.saveCity(args.result);
+    } else if (args.t) {
+      await this.saveToken(args.result);
     } else {
-      await this.getForecast(
-        await this.storageService.getKeyValue(
-          this.storageService.storageData.city,
-        ),
-      );
+      await this.getForecast();
     }
   }
 
@@ -37,29 +35,29 @@ export class App {
     }
 
     try {
-      await this.storageService.saveKeyValue(
-        this.storageService.storageData.token,
-        token,
-      );
+      await this.storageService.saveKeyValue(storageKeys.TOKEN, token);
       this.logger.log(`token saved -> token number: ${token}`);
     } catch (e) {
       this.logger.error(e.message);
     }
   }
 
-  private async getForecast(city: string | boolean): Promise<void> {
+  private async saveCity(city: string) {
     try {
-      if (typeof city === 'string') {
-        const weather = await this.apiService.getWeather(city);
-        this.logger.weather(weather);
-        await this.storageService.saveKeyValue(
-          this.storageService.storageData.city,
-          city,
-        );
-      } else {
-        this.logger.error(
-          "you didn't specify a city, specify a city and try again",
-        );
+      await this.storageService.saveKeyValue(storageKeys.CITY, city);
+      this.logger.log(`city saved -> ${city}`);
+    } catch (e) {
+      this.logger.error(e.message);
+    }
+  }
+
+  private async getForecast(): Promise<void> {
+    try {
+      const city = await this.storageService.getKeyValue(storageKeys.CITY);
+
+      if (city) {
+        const data = (await this.apiService.getWeather(city)) as responce;
+        this.logger.weather(data);
       }
     } catch (error) {
       switch (error?.response?.status) {
